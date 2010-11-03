@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <title>Talkstuff Client</title>
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js'></script>
+    <script src='js/swfobject.js'></script>
+    <script src='js/FABridge.js'></script>
+    <script src='js/web_socket.js'></script>
+    <script>
+      $(document).ready(function(){
+        function debug(str){ $("#debug").append("<p>" +  str); };
+        function submit() {
+          var message = $("#input-msg").val();
+          
+          $("#input-msg").val("");
+          if(message != "") {
+            ws.send(message);
+          }
+        }
+
+        ws = new WebSocket("ws://localhost:8080/");
+        ws.onmessage = function(evt) { $("#msg").append("<p>" + evt.data + "</p>"); };
+        ws.onclose = function() { debug("Socket closed"); };
+        ws.onopen = function() { debug("Connected"); };
+
+        $("#input-msg").keyup(function(event) {
+          if(event.keyCode == '13') {
+            submit();
+          }
+        });
+        
+        $("#submit-msg").click(function() {
+          submit();
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div id="debug"></div>
+    <div id="msg"></div>
+    <input id="input-msg"></input><button id="submit-msg">Submit</button>
+  </body>
+</html>

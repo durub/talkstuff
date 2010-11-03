@@ -1,0 +1,7 @@
+How-to:
+
+1. Install em-websocket gem
+  $ gem install em-websocket
+  
+2. Run server
+  $ ruby server.rb
