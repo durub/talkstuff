@@ -1,0 +1,125 @@
+Talkstuff Generic Protocol 1.0.0
+
+1. Terminology
+  CR means Client Request
+  SA means Server Answer, an answer to a CR
+  SE means Server Event
+  AR means Admin Request
+
+2. Structure
+  1 byte - Protocol magic number (0xdb)
+  1 byte - Action number
+  n bytes - Payload
+
+3. Protocol action reference
+
+Session handling
+
+  NEW_SESSION (CR)
+    Params:
+      nothing
+
+  NEW_SESSION (AR)
+    Params:
+      secret_key: string
+
+  ANS_NEW_SESSION (SA)
+    Params:
+      success_flag: true or false
+      user_id/error_code: unsigned int
+
+  END_SESSION (SE)
+    Params:
+      reason: unsigned char
+
+Room functions
+
+  JOIN_ROOM (CR)
+    Params:
+      nothing
+
+  JOIN_SPECIFIC_ROOM (CR)
+    Params:
+      room_id: unsigned integer
+
+  ANS_JOIN_ROOM (SA)
+    Params:
+      room_id: unsigned integer (0 for error, like user is already in a room etc.)
+
+  USER_JOIN (SE)
+    Params:
+      user_id: unsigned integer
+      user_name*: null terminated string
+
+  LEAVE_ROOM (CR)
+    Params:
+      nothing
+
+  LEAVE_ROOM (SE)
+    Params:
+      user_id: unsigned integer
+      reason*: unsigned char
+
+  END_ROOM (SE)
+    Params:
+      room_id*: unsigned integer
+
+Chatting
+
+  SEND_MESSAGE (CR)
+    Params:
+      message: null terminated string
+
+  RECEIVE_MESSAGE (SE)
+    Params:
+      user_id: unsigned integer
+      message: null terminated string
+
+Admin actions
+
+    PEEK_ROOM (AR)
+      Params:
+        room_id: unsigned integer
+      Note: Answer is ANS_JOIN_ROOM
+
+    END_USER_SESSION (AR)
+      Params:
+        user_id: unsigned integer
+
+    BAN_USER (AR)
+      Params:
+        user_id: unsigned integer
+      Note: Action taken is implementation defined; do nothing is a valid action.
+
+    GET_USER_IP (AR)
+      Params:
+        user_id: unsigned integer
+
+    GET_USER_IP (SA)
+      Params:
+        user_ip: unsigned integer
+
+*: optional, not all applications use it
+
+4. Action numbers
+  0x10 - NEW_SESSION (CR)
+  0x11 - NEW_SESSION (AR)
+  0x12 - ANS_NEW_SESSION
+  0x13 - END_SESSION
+  0x20 - JOIN_ROOM
+  0x21 - JOIN_SPECIFIC_ROOM
+  0x22 - ANS_JOIN_ROOM
+  0x23 - USER_JOIN
+  0x24 - LEAVE_ROOM (CR)
+  0x25 - LEAVE_ROOM (SE)
+  0x26 - END_ROOM
+  0x30 - SEND_MESSAGE
+  0x31 - RECEIVE_MESSAGE
+  0x40 - PEEK_ROOM
+  0x41 - END_USER_SESSION
+  0x42 - BAN_USER
+  0x43 - GET_USER_IP (AR)
+  0x44 - GET_USER_IP (SA)
+
+5. Implementation details
+  Room ids should start at 1, see ANS_JOIN_ROOM.
