@@ -1,6 +1,11 @@
 require 'test/unit'
 require 'mocha'
 
+# lib/ dependencies
+['dispatcher', 'handler'].each do |file|
+  require_relative "../lib/#{file}"
+end
+
 class DispatcherTest < Test::Unit::TestCase
   def setup
     @generic_handler = mock("My Mock Handler") do
