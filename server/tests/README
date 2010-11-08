@@ -1,0 +1,9 @@
+To test, you will need Mocha and Test::Unit.
+Test::Unit is part of the standard library. You will need to install the Mocha gem.
+Open up a terminal and:
+
+$ gem install mocha
+
+Now, you can test any suite you want. To test everything:
+
+$ ruby tests/everything.rb
