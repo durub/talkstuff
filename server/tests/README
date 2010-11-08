@@ -6,4 +6,12 @@ $ gem install mocha
 
 Now, you can test any suite you want. To test everything:
 
-$ ruby tests/everything.rb
+$ ruby tests/test.rb
+
+Test just units:
+
+$ ruby tests/unit.rb
+
+Test integration:
+
+$ ruby tests/integration.rb
