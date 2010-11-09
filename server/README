@@ -1,7 +1,21 @@
-How-to:
+How to:
 
 1. Install em-websocket gem
   $ gem install em-websocket
-  
+
 2. Run server
   $ ruby server.rb
+
+Testing:
+
+You will need Mocha and rake.
+Open up a terminal and:
+
+$ gem install rake mocha
+
+Then you can test using rake:
+
+rake test               # Test everything
+rake test:unit          # Test units
+rake test:integration   # Test integration
+rake test:handlers      # Test handlers

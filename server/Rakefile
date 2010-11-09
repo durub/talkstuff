@@ -1,0 +1,32 @@
+task :default => [:help]
+
+task :help do
+  puts "Help"
+  puts "Testing: "
+  puts "rake test             - Test everything"
+  puts "rake test:unit        - Test units"
+  puts "rake test:integration - Test integration"
+  puts "rake test:handlers    - Test handlers"
+end
+
+desc "Test everything"
+task :test do
+  ruby "tests/test.rb"
+end
+
+namespace :test do
+  desc "Test units"
+  task :unit do
+    ruby "tests/unit.rb"
+  end
+
+  desc "Test integration"
+  task :integration do
+    ruby "tests/integration.rb"
+  end
+
+  desc "Test handlers"
+  task :handlers do
+    ruby "tests/handlers.rb"
+  end
+end
