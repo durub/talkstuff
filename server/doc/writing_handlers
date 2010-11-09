@@ -1,0 +1,104 @@
+Writing handlers
+
+  Writing handlers is so easy.
+  There's only one thing to add: action number handlers
+  These are done using the "handle" class method. See the example for details. There's a optional parameter called payload, which contains
+  the data sent after the protocol magic number and action number. But, you can name it whatever you want!
+  Another important method is the answer_with. It is used to answer to an packet, generally a request.
+  The answer_with call goes like this:
+    * Reads :protocol_magic_number (optional), if it's a byte, it changes the protocol magic number in the data_string, originally determined
+    by the PacketDispatcher. If it's false, it excludes the protocol magic number from the data_string. If it's not entered, it maintains the
+    original PacketDispatcher magic_number. Anyway, :protocol_magic_number gets deleted from the *args Hash.
+    * Reads :action_number and deletes it from the *args Hash. If it's not present, it's calculated as (ActionNumberBeingHandled + 1). If it
+    should be different from that, you must explicity define it. See the example below, NEW_ADMIN_SESSION can omit the :action_number because
+    his action number is 0x11, and the answer action number is 0x12. However, NEW_SESSION can't because if it did, it would send a NEW_ADMIN_SESSION
+    to the client (0x10 + 1 = 0x11, NEW_ADMIN_SESSION).
+    * Reads :payload and deletes it from the *args Hash. Then, it gets appended to the data_string.
+    * Reads any other data present in the *args Hash, discards the key and appends the value to the data_string.
+    * Send the data_string to the user
+
+  Note:
+    :payload is optional and can be used as a replacement for the hash setup. See these examples:
+      # These three are all equal (at least they should ;-))
+      answer_with :my_string => "my string"
+      answer_with :payload => "my string"
+      answer_with :payload => "my ", :name => "string"
+
+      # These two are also equal
+      answer_with :success => 1, :user_id => 0, :username => "John"
+      answer_with :payload => [1, 0, "John"]
+
+  Example of a handler:
+    # Action numbers definitions (optional, but improves readability)
+    NEW_SESSION = 0x10
+    NEW_ADMIN_SESSION = 0x11
+    ANS_NEW_SESSION = 0x12
+
+    # Error codes (optional, but improves readability)
+    INVALID_KEY = 0x666
+
+    class SessionHandler < PacketHandler
+      handle NEW_SESSION do
+        answer_with :action_number => ANS_NEW_SESSION, :success => 1, :user_id => 0
+      end
+
+      handle NEW_ADMIN_SESSION do |payload|
+        secret_key = payload[0][0]
+
+        if $admin_keys.include?(secret_key)
+          answer_with :success => 1, :user_id => 0
+        else
+          answer_with :success => 0, :error_code => INVALID_KEY
+        end
+      end
+    end
+
+Writing handlers tests
+
+  Handlers tests are placed in the "tests/handlers" folder. They should be named in the following form: HandlerName + Test.
+  A handler named "Session" (SessionHandler) should have his test named "SessionTest". This is important for the get_handler_name method.
+  These tests must inherit from the HandlerTest class, which provides some convenience methods:
+
+  should_answer_with
+    Tests "answer_it" calls. should_answer_with behaves the same as answer_with; call it the same way you would call answer_with.
+    Each should_answer_with should have at most one call_handler_for call.
+
+    Example:
+      # Inside of GET_MY_USER_ID handler there should be a
+      # "answer_with :user_id => 0" call
+      should_answer_with :user_id => 0
+      call_handler_for GET_MY_USER_ID # where the actual testing occurs
+
+  call_handler_for
+    Calls the handler for the specified action number. Arguments can be specified. (payload)
+
+    Example:
+      call_handler_for OPEN_SESSION
+      call_handler_for LOGIN, "myusername", "password"
+                                    |            |
+                                    -------------------> payload
+
+  get_handler_name
+    Gets the name of the handler class. This method uses the test name to translate it to a handler name.
+    SessionTest -> SessionHandler
+    RoomTest -> RoomHandler
+
+    Other convenience methods depends on this method. The name of your test class is important.
+
+    Example:
+      class LoginTest < HandlerTest
+        def test_convenience
+          assert_equal "LoginHandler", get_handler_name # true
+        end
+      end
+
+  get_handler_class
+    Gets the handler class constant.
+    Other convenience methods depends on this method.
+
+    Example:
+      class LoginTest < HandlerTest
+        def test_convenience
+          assert_equal "LoginHandler", get_handler_class.name # true
+        end
+      end

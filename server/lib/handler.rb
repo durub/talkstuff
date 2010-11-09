@@ -20,4 +20,7 @@ class PacketHandler
   def self.call_handler_for(action_number, *args)
     @@handlers[action_number].call(args)
   end
+
+  def self.answer_with(*args)
+  end
 end
