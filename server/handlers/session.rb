@@ -9,7 +9,7 @@ class SessionHandler < PacketHandler
   end
 
   handle NEW_ADMIN_SESSION do
-    secret_key = payload[0]
+    secret_key = payload
 
     if $admin_keys.include?(secret_key)
       answer_with :success => 1, :user_id => 0
