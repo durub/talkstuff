@@ -18,9 +18,9 @@ class PacketHandler
       @@handlers[action_number] = blk
     end
 
-    def call_handler_for(action_number, *args)
+    def call_handler_for(action_number, payload = [])
       klass = Kernel.const_get(self.name).new
-      klass.instance_variable_set :@payload, args
+      klass.instance_variable_set :@payload, payload
       klass.instance_eval &@@handlers[action_number]
     end
   end
