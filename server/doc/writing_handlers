@@ -2,8 +2,8 @@ Writing handlers
 
   Writing handlers is so easy.
   There's only one thing to add: action number handlers
-  These are done using the "handle" class method. See the example for details. There's a optional parameter called payload, which contains
-  the data sent after the protocol magic number and action number. But, you can name it whatever you want!
+  These are done using the "handle" class method. See the example for details. Available to you in the block there's payload, which
+  contains the payload sent in the packet (the data after the protocol magic number and action number).
   Another important method is the answer_with. It is used to answer to an packet, generally a request.
   The answer_with call goes like this:
     * Reads :protocol_magic_number (optional), if it's a byte, it changes the protocol magic number in the data_string, originally determined
@@ -42,7 +42,7 @@ Writing handlers
         answer_with :action_number => ANS_NEW_SESSION, :success => 1, :user_id => 0
       end
 
-      handle NEW_ADMIN_SESSION do |payload|
+      handle NEW_ADMIN_SESSION do
         secret_key = payload[0][0]
 
         if $admin_keys.include?(secret_key)

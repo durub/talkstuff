@@ -6,7 +6,7 @@ class HandlerTest < Test::Unit::TestCase
 
     assert_equal "handle it", PacketHandler.call_handler_for(0x01)
 
-    PacketHandler.handle 0x02 do |payload|
+    PacketHandler.handle 0x02 do
       payload
     end
 
