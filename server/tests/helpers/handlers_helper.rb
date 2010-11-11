@@ -1,6 +1,6 @@
 class HandlerTest < Test::Unit::TestCase
   def should_answer_with(*args)
-    get_handler_class.any_instance.expects(:answer_with).with() do |*block_args|
+    get_handler_class.any_instance.expects(:answer_with).with do |*block_args|
       assert_equal args, block_args
     end
   end
