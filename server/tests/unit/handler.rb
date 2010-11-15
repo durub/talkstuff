@@ -10,6 +10,7 @@ class HandlerTest < Test::Unit::TestCase
       payload
     end
 
-    assert_equal [0x03, 0x50], PacketHandler.call_handler_for(0x02, [0x03, 0x50])
+    # [0x03, 0x50] array -> binary string
+    assert_equal "\x03P", PacketHandler.call_handler_for(0x02, [0x03, 0x50])
   end
 end
