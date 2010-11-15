@@ -18,12 +18,11 @@ class PacketHandler
       @@handlers[action_number] = blk
     end
 
-    # TODO: FIXME (see pack)
     def call_handler_for(action_number, packet = [])
       klass = Kernel.const_get(self.name).new
 
       if packet.kind_of? Metapacket
-        klass.instance_variable_set :@payload, packet.payload
+        klass.instance_variable_set :@payload, Array(packet.payload).pack("C*")
         klass.instance_variable_set :@socket, packet.socket
       elsif packet.kind_of? Array
         klass.instance_variable_set :@payload, packet.pack("C*") rescue nil
