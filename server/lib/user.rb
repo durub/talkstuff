@@ -14,6 +14,14 @@ class User
     @session_data[key] = value
   end
 
+  def [](key)
+    get(key)
+  end
+
+  def []=(key, value)
+    set(key, value)
+  end
+
   def unset(key)
     @session_data.delete(key)
   end

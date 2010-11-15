@@ -12,6 +12,9 @@ class UserTest < Test::Unit::TestCase
     @user.set(:custom_key, "string")
     assert_equal "string", @user.get(:custom_key)
 
+    @user[:custom_key] = "string2"
+    assert_equal "string2", @user[:custom_key]
+
     @user.unset(:custom_key)
     assert_equal nil, @user.get(:custom_key)
   end
