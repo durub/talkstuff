@@ -27,6 +27,7 @@ class PacketDispatcher
     raise "Handler does not exist for this packet type" unless has_handler_for?(packet[1])
 
     if packet.kind_of? Metapacket
+      packet = packet.clone
       action_number = packet[1]
       packet.payload = packet[2..-1]
 
