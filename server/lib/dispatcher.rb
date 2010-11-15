@@ -25,6 +25,14 @@ class PacketDispatcher
   def handle(packet)
     raise "Packet does not match protocol magic number" unless packet[0] == @magic_number
     raise "Handler does not exist for this packet type" unless has_handler_for?(packet[1])
-    @handlers[packet[1]].call_handler_for(packet[1], packet[2..-1])
+
+    if packet.kind_of? Metapacket
+      action_number = packet[1]
+      packet.payload = packet[2..-1]
+
+      @handlers[action_number].call_handler_for(action_number, packet)
+    else
+      @handlers[packet[1]].call_handler_for(packet[1], packet[2..-1])
+    end
   end
 end

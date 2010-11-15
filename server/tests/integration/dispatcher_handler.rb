@@ -4,6 +4,10 @@ class DispatcherHandlerIntegrationTest < Test::Unit::TestCase
       "return string"
     end
 
+    PacketHandler.handle 0x02 do
+      [payload, socket]
+    end
+
     @dispatcher = PacketDispatcher.new(0x00)
   end
 
@@ -23,10 +27,14 @@ class DispatcherHandlerIntegrationTest < Test::Unit::TestCase
 
   def test_integration_metapacket
     PacketHandler.register_handlers(@dispatcher)
-    packet = Metapacket.new([0x00, 0x01], mock("Socket"))
+    socket = mock("Socket")
+    packet = Metapacket.new([0x00, 0x01, 65, 66, 67], socket)
 
     assert @dispatcher.has_handler_for? 0x01
     assert_equal "return string", @dispatcher.handle(packet)
+
+    packet[1] = 0x02
+    assert_equal [packet.payload[2..-1].pack("C*"), socket], @dispatcher.handle(packet)
 
     PacketHandler.unregister_handlers(@dispatcher)
 
