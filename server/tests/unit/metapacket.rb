@@ -16,4 +16,8 @@ class MetapacketTest < Test::Unit::TestCase
     assert_equal 0x73, packet[0]
     assert_equal 0xff, packet[2]
   end
+
+  def test_adapt
+    assert_equal [0xdb, 0x01], Metapacket.new("\xdb\x01").adapt
+  end
 end

@@ -13,4 +13,8 @@ class Metapacket
   def []=(index, value)
     @payload[index] = value
   end
+
+  def adapt
+    @payload = PacketAdapter.adapt_in(@payload).unpack("C*")
+  end
 end
