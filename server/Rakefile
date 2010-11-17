@@ -1,6 +1,6 @@
 task :default => [:help]
 
-verbose(false) # don't echo commands'
+verbose(false) # don't echo commands
 
 task :help do
   puts "Help"
