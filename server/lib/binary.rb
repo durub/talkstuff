@@ -1,8 +1,8 @@
 module Binary
   module_function
 
-  def from_binary_string(params, string)
-    string.unpack(params)
+  def from_binary_string(format, string)
+    string.unpack(format)
   end
 
   def to_binary_string(object)
