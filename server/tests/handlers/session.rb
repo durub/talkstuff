@@ -1,5 +1,3 @@
-require 'ruby-debug'
-
 class SessionTest < HandlerTest
   def setup
     $admin_keys = []
