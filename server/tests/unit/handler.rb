@@ -29,4 +29,17 @@ class HandlerTest < Test::Unit::TestCase
     assert_equal "\x00\x10data", @handler.answer_with(:protocol_magic_number => 0x00, :action_number => 0x10, :string => "data")
     assert_equal "\x20data!", @handler.answer_with(:protocol_magic_number => false, :action_number => 0x20, :string => "data!")
   end
+
+  def test_answer_with_sockets
+    socket = mock("Socket")
+    socket.expects(:send_data).with do |data|
+      data == "\x00\x11data..."
+    end
+
+    @handler = PacketHandler.new(0x00)
+    @handler.instance_variable_set :@action_number, 0x10
+    @handler.instance_variable_set :@socket, socket
+
+    assert_equal "\x00\x11data...", @handler.answer_with(:data => "data...")
+  end
 end
