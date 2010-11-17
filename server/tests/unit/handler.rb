@@ -13,4 +13,20 @@ class HandlerTest < Test::Unit::TestCase
     # [0x03, 0x50] array -> binary string
     assert_equal "\x03P", PacketHandler.call_handler_for(0x02, [0x03, 0x50])
   end
+
+  def test_answer_with
+    @handler = PacketHandler.new(0x00)
+    @handler.instance_variable_set :@action_number, 0x10
+
+    assert_equal "\x00\x11\x03\x50", @handler.answer_with(:payload => [0x03, 0x50])
+    assert_equal "\x00\x11mix datatypes\xFF\x30\x20\x10\x43\x00\x80\x00",
+                 @handler.answer_with(:payload => ["mix datatypes", 0xff, [0x30, 0x20, 0x10], 128.5])
+    assert_equal "\x00\x11payload_1_2_3", @handler.answer_with(:payload => "payload", :_1 => "_1", :_2 => "_2", :_3 => "_3")
+
+    @handler = PacketHandler.new(0x05)
+    @handler.instance_variable_set :@action_number, 0x14
+    assert_equal "\x05\x15user\x00password", @handler.answer_with(:user => ["user", 0x00], :pass => "password")
+    assert_equal "\x00\x10data", @handler.answer_with(:protocol_magic_number => 0x00, :action_number => 0x10, :string => "data")
+    assert_equal "\x20data!", @handler.answer_with(:protocol_magic_number => false, :action_number => 0x20, :string => "data!")
+  end
 end
