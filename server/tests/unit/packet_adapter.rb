@@ -42,14 +42,12 @@ end
 
 class InstancedPacketAdapterTest < Test::Unit::TestCase
   def setup
-    @adapter = PacketAdapter.new
-
     generic = mock("Generic adapter") do
       stubs(:adapt_in).returns("generic")
       stubs(:adapt_out).returns("adapter")
     end
 
-    @adapter.add_adapter(generic)
+    @adapter = PacketAdapter.new([generic])
   end
 
   def test_adapt
