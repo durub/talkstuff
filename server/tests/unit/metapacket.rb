@@ -18,6 +18,10 @@ class MetapacketTest < Test::Unit::TestCase
   end
 
   def test_adapt
-    assert_equal [0xdb, 0x01], Metapacket.new("\xdb\x01").adapt
+    adapter = mock("Generic Adapter") do
+      expects(:adapt_in).returns("\xdb\x01")
+    end
+
+    assert_equal [0xdb, 0x01], Metapacket.new("\xdb\x01").adapt(adapter).payload
   end
 end

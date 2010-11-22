@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 require 'em-websocket'
 require_relative 'lib/loader.rb'
 
@@ -11,7 +12,8 @@ $dispatcher = PacketDispatcher.new(0xdb)
 Loader.load_handlers($dispatcher)
 
 # Adapter
-PacketAdapter.use_adapter(Base64Adapter)
+$adapter = PacketAdapter.new
+$adapter.add_adapter(Base64Adapter)
 
 # Debug
 if $DEBUG || ARGV[0] == "debug"
@@ -31,11 +33,12 @@ EventMachine.run do
 
         Loader.load_lib
         Loader.load_handlers($dispatcher)
-        PacketAdapter.use_adapter(Base64Adapter)
+        $adapter.use_raw
+        $adapter.add_adapter(Base64Adapter)
       end
 
       begin
-        $dispatcher.handle(Metapacket.new(message, ws).adapt)
+        $dispatcher.handle(Metapacket.new(message, ws).adapt($adapter))
       rescue
         print "handle exception: ", $!, "\n"
       end

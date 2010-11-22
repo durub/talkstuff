@@ -14,7 +14,8 @@ class Metapacket
     @payload[index] = value
   end
 
-  def adapt
-    @payload = PacketAdapter.adapt_in(@payload).unpack("C*")
+  def adapt(adapter)
+    @payload = adapter.adapt_in(@payload).unpack("C*")
+    self
   end
 end
