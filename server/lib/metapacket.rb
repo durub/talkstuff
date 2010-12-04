@@ -15,6 +15,10 @@ class Metapacket
   end
 
   def adapt(adapter)
+    self.clone.adapt!(adapter)
+  end
+
+  def adapt!(adapter)
     @payload = adapter.adapt_in(@payload).unpack("C*")
     self
   end
