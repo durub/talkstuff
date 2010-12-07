@@ -5,8 +5,8 @@ class HandlerTest < Test::Unit::TestCase
     end
   end
 
-  def call_handler_for(action_number, payload = [])
-    get_handler_class.call_handler_for(action_number, payload)
+  def call_handler_for(action_number, payload = [], server_data = nil)
+    get_handler_class.call_handler_for(action_number, payload, server_data)
   end
 
   def get_handler_name
