@@ -33,4 +33,16 @@ class DispatcherTest < Test::Unit::TestCase
       @dispatcher.handle([0x00, 0x01])
     end
   end
+
+  def test_server_data
+    @generic_handler = mock("My Mock Handler (Server Data)")
+    @generic_handler.stubs(:call_handler_for).with do |unused, not_used, server_data|
+      assert_equal ({ :data => :anything }), server_data
+    end
+
+    @dispatcher.add_handler(0x01, @generic_handler)
+
+    server_data = { :data => :anything }
+    @dispatcher.handle([0x00, 0x01], server_data)
+  end
 end

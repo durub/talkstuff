@@ -22,18 +22,19 @@ class PacketDispatcher
     @handlers.has_key?(action_number)
   end
 
-  def handle(packet)
+  def handle(packet, server_data = nil)
     raise "Packet does not match protocol magic number" unless packet[0] == @magic_number
     raise "Handler does not exist for this packet type" unless has_handler_for?(packet[1])
 
+    server_data = ServerData.new if server_data.nil?
+
     if packet.kind_of? Metapacket
       packet = packet.clone
-      action_number = packet[1]
-      packet.payload = packet[2..-1]
+      packet.strip_meta_from_payload!
 
-      @handlers[action_number].call_handler_for(action_number, packet)
+      @handlers[packet.action_number].call_handler_for(packet.action_number, packet, server_data)
     else
-      @handlers[packet[1]].call_handler_for(packet[1], packet[2..-1])
+      @handlers[packet[1]].call_handler_for(packet[1], packet[2..-1], server_data)
     end
   end
 end
