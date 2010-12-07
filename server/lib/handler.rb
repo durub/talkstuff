@@ -18,10 +18,11 @@ class PacketHandler
       @@handlers[action_number] = blk
     end
 
-    def call_handler_for(action_number, packet = [])
+    def call_handler_for(action_number, packet = [], server_data = nil)
       klass = Kernel.const_get(self.name).new
 
       klass.instance_variable_set :@action_number, action_number
+      klass.instance_variable_set :@server, server_data || {}
       if packet.kind_of? Metapacket
         if packet.payload.kind_of?(Hash) || packet.payload.kind_of?(String)
           klass.instance_variable_set :@payload, packet.payload
@@ -109,5 +110,9 @@ class PacketHandler
 
   def protocol_magic_number
     @magic_number
+  end
+
+  def server
+    @server
   end
 end

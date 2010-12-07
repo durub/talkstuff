@@ -33,6 +33,16 @@ class HandlerTest < Test::Unit::TestCase
 
     metapacket.stubs(:payload).returns({ :key => :value, :john => :doe })
     assert_equal [{:key => :value, :john => :doe}, "SocketObject"], PacketHandler.call_handler_for(0x03, metapacket), "Hash -> Hash failed"
+
+    # server data
+    PacketHandler.handle 0x04 do
+      server
+    end
+
+    assert_equal ["server", "data"], PacketHandler.call_handler_for(0x04, [], ["server", "data"])
+    assert_equal ({ :list => [:user1, :user2], :config => { :outbound => "1Mb/s" } }),
+                 PacketHandler.call_handler_for(0x04, [], { :list => [:user1, :user2], :config => { :outbound => "1Mb/s" } })
+    assert_equal 60, PacketHandler.call_handler_for(0x04, [], 60) # should accept any data type
   end
 
   def test_answer_with
