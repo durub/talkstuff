@@ -34,4 +34,8 @@ class User
   def connected?
     @connected
   end
+
+  def admin?
+    @session_data[:admin] || false
+  end
 end

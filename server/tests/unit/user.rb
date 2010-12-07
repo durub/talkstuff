@@ -32,4 +32,10 @@ class UserTest < Test::Unit::TestCase
     assert_equal socket, @user.socket
     assert !@user.connected?
   end
+
+  def test_admin
+    assert !@user.admin?
+    assert !User.new.admin?
+    assert User.new(:admin => true).admin?
+  end
 end
