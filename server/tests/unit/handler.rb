@@ -18,7 +18,6 @@ class HandlerTest < Test::Unit::TestCase
     # [0x03, 0x50] array -> binary string
     assert_equal "\x03P", PacketHandler.call_handler_for(0x02, [0x03, 0x50])
 
-    metapacket = Metapacket.new
     metapacket = mock("Metapacket") do
       stubs(:socket).returns("SocketObject")
       stubs(:kind_of?).with(Metapacket).returns(true)
