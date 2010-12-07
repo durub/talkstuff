@@ -10,10 +10,18 @@ module Loader
   end
 
   def load_handlers(dispatcher = nil)
+    each_handler do |handler|
+      handler.register_handlers(dispatcher) if dispatcher
+    end
+  end
+
+  # also loads each handler file
+  def each_handler
     Dir.new(File.dirname(__FILE__) + '/../handlers').each do |file|
       unless ['.', '..'].include? file
         load File.dirname(__FILE__) + '/../handlers/' + file
-        Kernel.const_get(file.capitalize[0..-4] << "Handler").register_handlers(dispatcher) if dispatcher
+
+        yield Kernel.const_get(file.capitalize[0..-4] << "Handler")
       end
     end
   end
