@@ -10,8 +10,30 @@ class HandlerTest < Test::Unit::TestCase
       payload
     end
 
+    PacketHandler.handle 0x03 do
+      [payload, socket]
+    end
+
+    # different data types
     # [0x03, 0x50] array -> binary string
     assert_equal "\x03P", PacketHandler.call_handler_for(0x02, [0x03, 0x50])
+
+    metapacket = Metapacket.new
+    metapacket = mock("Metapacket") do
+      stubs(:socket).returns("SocketObject")
+      stubs(:kind_of?).with(Metapacket).returns(true)
+      stubs(:kind_of?).with(Array).returns(false)
+      stubs(:kind_of?).with(String).returns(false)
+    end
+
+    metapacket.stubs(:payload).returns("\x03P")
+    assert_equal ["\x03P", "SocketObject"], PacketHandler.call_handler_for(0x03, metapacket), "Binary string -> binary string failed"
+
+    metapacket.stubs(:payload).returns([0x03, 0x50])
+    assert_equal ["\x03P", "SocketObject"], PacketHandler.call_handler_for(0x03, metapacket), "Array -> binary string failed"
+
+    metapacket.stubs(:payload).returns({ :key => :value, :john => :doe })
+    assert_equal [{:key => :value, :john => :doe}, "SocketObject"], PacketHandler.call_handler_for(0x03, metapacket), "Hash -> Hash failed"
   end
 
   def test_answer_with

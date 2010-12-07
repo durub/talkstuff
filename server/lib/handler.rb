@@ -23,7 +23,12 @@ class PacketHandler
 
       klass.instance_variable_set :@action_number, action_number
       if packet.kind_of? Metapacket
-        klass.instance_variable_set :@payload, Array(packet.payload).pack("C*")
+        if packet.payload.kind_of?(Hash) || packet.payload.kind_of?(String)
+          klass.instance_variable_set :@payload, packet.payload
+        else
+          klass.instance_variable_set :@payload, Array(packet.payload).pack("C*")
+        end
+
         klass.instance_variable_set :@socket, packet.socket
       elsif packet.kind_of? Array
         klass.instance_variable_set :@payload, packet.pack("C*") rescue nil
