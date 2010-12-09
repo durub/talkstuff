@@ -27,12 +27,12 @@ class PacketHandler
         if packet.payload.kind_of?(Hash) || packet.payload.kind_of?(String)
           klass.instance_variable_set :@payload, packet.payload
         else
-          klass.instance_variable_set :@payload, Array(packet.payload).pack("C*")
+          klass.instance_variable_set :@payload, Binary.to_binary_string(packet.payload)
         end
 
         klass.instance_variable_set :@socket, packet.socket
       elsif packet.kind_of? Array
-        klass.instance_variable_set :@payload, packet.pack("C*") rescue nil
+        klass.instance_variable_set :@payload, Binary.to_binary_string(packet)
       elsif packet.kind_of? String
         klass.instance_variable_set :@payload, packet
       end
