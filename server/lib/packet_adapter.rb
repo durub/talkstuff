@@ -1,6 +1,4 @@
 class PacketAdapter
-  @@adapter = nil
-
   def initialize(adapters = [])
     @adapters = []
 
