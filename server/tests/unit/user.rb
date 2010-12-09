@@ -34,8 +34,13 @@ class UserTest < Test::Unit::TestCase
   end
 
   def test_admin
+    assert User.new(:admin => true).admin?
+    assert User.new(:admin => 1).admin?
+    assert User.new(:admin => "yes").admin?
+
     assert !@user.admin?
     assert !User.new.admin?
-    assert User.new(:admin => true).admin?
+    assert !User.new(:admin => nil).admin?
+    assert !User.new(:admin => false).admin?
   end
 end

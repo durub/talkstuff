@@ -36,6 +36,6 @@ class User
   end
 
   def admin?
-    @session_data[:admin] || false
+    !!@session_data[:admin] || false
   end
 end
