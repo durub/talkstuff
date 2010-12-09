@@ -7,7 +7,7 @@ class TalkServer
     @server_data = ServerData.new
     @server_data[:user_list] = UserList.new
 
-    @ip, @port, @debug = ip, port, debug
+    @ip, @port, @debug = ip, port, $DEVELOPMENT || debug
     @signature = nil
   end
 
