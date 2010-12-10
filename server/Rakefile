@@ -13,7 +13,7 @@ end
 
 desc "Test everything"
 task :test do
-  ruby "tests/test.rb"
+  ruby "test/test.rb"
 end
 
 desc "Stats"
@@ -56,16 +56,16 @@ end
 namespace :test do
   desc "Test units"
   task :unit do
-    ruby "tests/unit.rb"
+    ruby "test/unit.rb"
   end
 
   desc "Test integration"
   task :integration do
-    ruby "tests/integration.rb"
+    ruby "test/integration.rb"
   end
 
   desc "Test handlers"
   task :handlers do
-    ruby "tests/handlers.rb"
+    ruby "test/handlers.rb"
   end
 end
