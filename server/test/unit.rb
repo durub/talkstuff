@@ -8,6 +8,6 @@ Loader.load_lib
 # Run tests
 Dir.new(File.dirname(__FILE__) + '/unit').each do |file|
   unless ['.', '..'].include? file
-    require_relative 'unit/' + file
+    require_relative File.join('unit', file)
   end
 end

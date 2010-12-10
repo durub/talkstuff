@@ -8,6 +8,6 @@ Loader.load_lib
 # Run tests
 Dir.new(File.dirname(__FILE__) + '/integration').each do |file|
   unless ['.', '..'].include? file
-    require_relative 'integration/' + file
+    require_relative File.join('integration', file)
   end
 end

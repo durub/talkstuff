@@ -14,6 +14,6 @@ Loader.load_handlers
 # Run tests
 Dir.new(File.dirname(__FILE__) + '/handlers').each do |file|
   unless ['.', '..'].include? file
-    require_relative 'handlers/' + file
+    require_relative File.join('handlers', file)
   end
 end
