@@ -9,6 +9,8 @@ task :help do
   puts "rake test:unit        - Test units"
   puts "rake test:integration - Test integration"
   puts "rake test:handlers    - Test handlers"
+  puts "Utilities: "
+  puts "rake stats            - Code stats (LOC, etc.)"
 end
 
 desc "Test everything"
@@ -18,39 +20,20 @@ end
 
 desc "Stats"
 task :stats do
-  regex = /^Ruby\s+\d+\s+(\d+)\s+(\d+)\s+(\d+).+$/
-  blank, comment, sloc = 1, 2, 3
-  handlers = regex.match(%x{cloc handlers})
-  lib = regex.match(%x{cloc lib})
-  tests = regex.match(%x{cloc tests})
+    begin
+      require 'code_statistics/code_statistics'
 
-  code_sloc = handlers[sloc].to_i + lib[sloc].to_i
-  test_sloc = tests[sloc].to_i
-  code_tloc = code_sloc + handlers[blank].to_i + handlers[comment].to_i + lib[blank].to_i + lib[comment].to_i
-  test_tloc = test_sloc + tests[blank].to_i + tests[comment].to_i
-  lib_sloc = lib[sloc].to_i
-  lib_tloc = lib_sloc + lib[blank].to_i + lib[comment].to_i
-  handlers_sloc = handlers[sloc].to_i
-  handlers_tloc = handlers_sloc + handlers[blank].to_i + handlers[comment].to_i
-  total_sloc = code_sloc + test_sloc
-  total_tloc = code_tloc + test_tloc
-  ratio = test_sloc.to_f / code_sloc.to_f
-  ratio = (ratio * 10.0).round / 10.0
+      stats_directories = [
+        %w(Libraries lib/),
+        %w(Handlers handlers/)
+      ].collect { |name, dir| [ name, "#{Dir.pwd}/#{dir}" ] }.select { |name, dir| File.directory?(dir) }
 
-  string = <<STRING
-+----------------------+-------+-------+
-| Name                 | Lines |   LOC |
-+----------------------+-------+-------+
-| Library              |   #{lib_tloc} |   #{lib_sloc} |
-| Handlers             |   #{handlers_tloc}  |   #{handlers_sloc}  |
-| Tests                |   #{test_tloc} |   #{test_sloc} |
-+----------------------+-------+-------+
-| Total                |  #{total_tloc} |  #{total_sloc}  |
-+----------------------+-------+-------+
-  Code LOC: #{code_sloc}    Test LOC: #{test_sloc}     Code to Test Ratio: 1:#{ratio}
-STRING
-
-  print string
+      puts CodeStatistics::CodeStatistics.new(stats_directories).to_s
+    rescue LoadError
+      puts "You need to install the code_statistics gem to use the stats task"
+      puts "Install it using: "
+      puts "$ gem install code_statistics"
+    end
 end
 
 namespace :test do
