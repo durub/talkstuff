@@ -5,10 +5,15 @@ class TalkServer
     @packet_adapter = PacketAdapter.new
     @dispatcher = PacketDispatcher.new(0xdb)
     @server_data = ServerData.new
-    @server_data[:user_list] = UserList.new
+    init_data
 
     @ip, @port, @debug = ip, port, $DEVELOPMENT || debug
     @signature = nil
+  end
+
+  def init_data
+    @server_data[:user_list] = UserList.new
+    @server_data[:admin_keys] = ["test_key"]
   end
 
   def start
