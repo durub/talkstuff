@@ -49,4 +49,37 @@ class PacketAdapterTest < Test::Unit::TestCase
       @adapter.add_adapter(unsupported)
     end
   end
+
+  def test_adapter_stack
+    adapter1 = mock("Adapter one") do
+      stubs(:adapt_in).returns("one")
+      stubs(:adapt_out).returns("one")
+    end
+
+    adapter2 = mock("Adapter two") do
+      stubs(:adapt_in).returns("two")
+      stubs(:adapt_out).returns("two")
+    end
+
+    @adapter.push
+
+    @adapter.add_adapter(adapter1)
+    assert_equal "one", @adapter.adapt_in("test string")
+    assert_equal "one", @adapter.adapt_out("test string")
+
+    @adapter.add_adapter(adapter2)
+    @adapter.push
+
+    @adapter.use_raw
+    assert_equal "test string", @adapter.adapt_in("test string")
+    assert_equal "test string", @adapter.adapt_out("test string")
+
+    @adapter.pop
+    assert_equal "two", @adapter.adapt_in("test string")
+    assert_equal "two", @adapter.adapt_out("test string")
+
+    @adapter.pop
+    assert_equal "generic", @adapter.adapt_in("test string")
+    assert_equal "adapter", @adapter.adapt_out("test string")
+  end
 end

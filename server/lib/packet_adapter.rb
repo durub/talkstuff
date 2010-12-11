@@ -1,6 +1,7 @@
 class PacketAdapter
   def initialize(adapters = [])
     @adapters = []
+    @state = []
 
     adapters.each do |adapter|
       add_adapter(adapter)
@@ -35,5 +36,13 @@ class PacketAdapter
 
   def use_raw
     @adapters = []
+  end
+
+  def push
+    @state.push @adapters.clone
+  end
+
+  def pop
+    @adapters = @state.pop || []
   end
 end
