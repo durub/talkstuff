@@ -5,7 +5,9 @@ class PacketAdapterTest < Test::Unit::TestCase
       stubs(:adapt_out).returns("adapter")
     end
 
-    @adapter = PacketAdapter.new([generic])
+    generic.stubs(:to_ary).returns([generic])
+
+    @adapter = PacketAdapter.new(generic)
   end
 
   def test_adapt

@@ -3,7 +3,7 @@ class PacketAdapter
     @adapters = []
     @state = []
 
-    adapters.each do |adapter|
+    Array(adapters).each do |adapter|
       add_adapter(adapter)
     end
   end
