@@ -32,4 +32,9 @@ class BinaryTest < Test::Unit::TestCase
   def test_float
     assert_equal "@\xD0\x00\x00", to_binary_from_float(6.5)
   end
+
+  # unsupported types, like booleans, should evaluate to ""
+  def test_unsupported_types
+    assert_equal "@\xD0\x00\x00\xFFstring", to_binary_string([6.5, 255, true, false, "string"])
+  end
 end

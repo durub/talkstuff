@@ -10,6 +10,8 @@ module Binary
     return to_binary_from_fixnum(object) if object.kind_of? Fixnum
     return to_binary_from_float(object)  if object.kind_of? Float
     return to_binary_from_string(object) if object.kind_of? String
+
+    ""
   end
 
   def to_binary_from_array(array)
