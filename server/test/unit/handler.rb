@@ -1,4 +1,4 @@
-class HandlerTest < Test::Unit::TestCase
+class PacketHandlerTest < Test::Unit::TestCase
   def test_handling
     PacketHandler.handle 0x01 do
       "handle it"
