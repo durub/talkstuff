@@ -20,6 +20,10 @@ class PacketAdapterTest < Test::Unit::TestCase
     @adapter.add_adapter(second)
     assert_equal "adapti", @adapter.adapt_in("in")
     assert_equal "adapto", @adapter.adapt_out("out")
+
+    @adapter.remove_adapter(second)
+    assert_equal "generic", @adapter.adapt_in("random data")
+    assert_equal "adapter", @adapter.adapt_out("anything")
   end
 
   def test_raw
