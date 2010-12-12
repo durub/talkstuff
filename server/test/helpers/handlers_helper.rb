@@ -6,8 +6,7 @@ class HandlerTest < Test::Unit::TestCase
   end
 
   def should_answer_with_json(args)
-    args[:json] = true
-    should_answer_with(args)
+    should_answer_with(args.merge(:json => true))
   end
 
   def call_handler_for(action_number, payload = [], server_data = nil)
