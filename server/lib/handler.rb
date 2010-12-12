@@ -123,7 +123,7 @@ class PacketHandler
       @packet_adapter.pop
     end
 
-    socket.send_data data unless socket.nil?
+    socket.send data unless socket.nil?
     data
   end
 

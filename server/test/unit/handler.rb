@@ -79,7 +79,7 @@ class PacketHandlerTest < Test::Unit::TestCase
 
   def test_answer_with_sockets
     socket = mock("Socket")
-    socket.expects(:send_data).with do |data|
+    socket.expects(:send).with do |data|
       data == "\x00\x11data..."
     end
 
