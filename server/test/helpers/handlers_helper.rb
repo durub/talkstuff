@@ -1,8 +1,13 @@
 class HandlerTest < Test::Unit::TestCase
-  def should_answer_with(*args)
-    get_handler_class.any_instance.expects(:answer_with).with do |*block_args|
+  def should_answer_with(args)
+    get_handler_class.any_instance.expects(:answer_with).with do |block_args|
       args == block_args
     end
+  end
+
+  def should_answer_with_json(args)
+    args[:json] = true
+    should_answer_with(args)
   end
 
   def call_handler_for(action_number, payload = [], server_data = nil)
