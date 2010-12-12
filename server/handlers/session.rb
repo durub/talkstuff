@@ -7,7 +7,7 @@ class SessionHandler < PacketHandler
   handle NEW_SESSION do
     server[:user_list].add_user User.new
 
-    answer_with :action_number => ANS_NEW_SESSION, :success => 1, :user_id => 0
+    answer_with :action_number => ANS_NEW_SESSION, :success => 1, :user_id => 0, :json => true
   end
 
   handle NEW_ADMIN_SESSION do
@@ -18,9 +18,9 @@ class SessionHandler < PacketHandler
       admin = User.new(:admin => true)
       server[:user_list].add_user admin
 
-      answer_with :success => 1, :user_id => 0
+      answer_with :success => 1, :user_id => 0, :json => true
     else
-      answer_with :success => 0, :error_code => INVALID_KEY
+      answer_with :success => 0, :error_code => INVALID_KEY, :json => true
     end
   end
 end

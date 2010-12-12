@@ -9,7 +9,7 @@ class SessionTest < HandlerTest
       !user.admin?
     end
 
-    should_answer_with :action_number => ANS_NEW_SESSION, :success => 1, :user_id => 0
+    should_answer_with_json :action_number => ANS_NEW_SESSION, :success => 1, :user_id => 0
     call_handler_for NEW_SESSION, [], @data
   end
 
@@ -18,15 +18,15 @@ class SessionTest < HandlerTest
       user.admin?
     end
 
-    should_answer_with :success => 1, :user_id => 0
+    should_answer_with_json :success => 1, :user_id => 0
     call_handler_for NEW_ADMIN_SESSION, "test_key", @data
   end
 
   def test_invalid_admin_session
-    should_answer_with :success => 0, :error_code => INVALID_KEY
+    should_answer_with_json :success => 0, :error_code => INVALID_KEY
     call_handler_for NEW_ADMIN_SESSION, "wrong_key", @data
 
-    should_answer_with :success => 0, :error_code => INVALID_KEY
+    should_answer_with_json :success => 0, :error_code => INVALID_KEY
     call_handler_for NEW_ADMIN_SESSION, [], @data
   end
 end
