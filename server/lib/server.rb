@@ -14,6 +14,7 @@ class TalkServer
   def init_data
     @server_data[:user_list] = UserList.new
     @server_data[:admin_keys] = ["test_key"]
+    @server_data[:packet_adapter] = @packet_adapter
   end
 
   def start
