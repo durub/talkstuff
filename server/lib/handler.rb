@@ -22,6 +22,7 @@ class PacketHandler
       klass = Kernel.const_get(self.name).new
 
       klass.instance_variable_set :@action_number, action_number
+      klass.instance_variable_set :@packet_adapter, server_data.delete(:packet_adapter) || PacketAdapter.new rescue PacketAdapter.new
       klass.instance_variable_set :@server, server_data || {}
       if packet.kind_of? Metapacket
         if packet.payload.kind_of?(Hash) || packet.payload.kind_of?(String)
@@ -50,50 +51,77 @@ class PacketHandler
   end
 
   # answer_with
-  # * Reads :protocol_magic_number (optional), if it's a byte, it changes the protocol magic number in the data_string, originally determined
-  # by the PacketDispatcher. If it's false, it excludes the protocol magic number from the data_string. If it's not entered, it maintains the
-  # original PacketDispatcher magic_number. Anyway, :protocol_magic_number gets deleted from the *args Hash.
+  #
+  # Binary:
+  # * Reads :protocol_magic_number (optional), if it's a byte, it changes the protocol magic number in the data variable, originally determined
+  # by the PacketDispatcher. If it's false, it excludes the protocol magic number from the data variable. If it's not entered, it maintains the
+  # original PacketDispatcher magic_number. :protocol_magic_number gets deleted from the *args Hash.
   # * Reads :action_number and deletes it from the *args Hash. If it's not present, it's calculated as (ActionNumberBeingHandled + 1). If it
   # should be different from that, you must explicity define it.
-  # * Reads :payload and deletes it from the *args Hash. Then, it gets appended to the data_string.
-  # * Reads any other data present in the *args Hash, discards the key and appends the value to the data_string.
-  # * Send the data_string to the user
+  # * Reads :payload and deletes it from the *args Hash. Then, it gets appended to the data variable.
+  # * Reads any other data present in the *args Hash, discards the key and appends the value to the data variable.
+  # * Adapts the data (packet adapters)
+  # * Sends the data variable to the user
+  #
+  # JSON:
+  # * Reads :protocol_magic_number (the priority, which means that it shadows :protocol_number) OR :protocol_number
+  # * Reads :action_number.  If it's not present, it's calculated as (ActionNumberBeingHandled + 1). If it
+  # should be different from that, you must explicity define it.
+  # * Transforms the remaining Hash into a JSON string
+  # * Sends the JSON string to the user
   def answer_with(hash)
-    data_string = Binary.to_binary_from_array([protocol_magic_number, action_number + 0x01])
-    index = 1
+    if hash.kind_of?(Hash) && !hash[:json]
+      data = Binary.to_binary_from_array([protocol_magic_number, action_number + 0x01])
+      index = 1
 
-    if hash.kind_of? Hash
       # Read protocol magic number
       magic_number = hash[:protocol_magic_number]
 
       hash.delete(:protocol_magic_number)
       if magic_number == false
-        data_string.slice!(0)
+        data.slice!(0)
         index = 0
       elsif magic_number.kind_of? Fixnum
-        data_string[0] = Binary.to_binary_from_fixnum(magic_number)
+        data[0] = Binary.to_binary_from_fixnum(magic_number)
       end
 
       # Read action_number
       _action_number = hash[:action_number]
 
       hash.delete(:action_number)
-      data_string[index] = Binary.to_binary_string(_action_number) unless _action_number.nil?
+      data[index] = Binary.to_binary_string(_action_number) unless _action_number.nil?
 
       # Read payload
       _payload = hash[:payload]
       hash.delete(:payload)
 
-      data_string << Binary.to_binary_string(_payload) unless _payload.nil?
+      data << Binary.to_binary_string(_payload) unless _payload.nil?
 
       # Read all the other data
       hash.each_value do |value|
-        data_string << Binary.to_binary_string(value)
+        data << Binary.to_binary_string(value)
       end
+
+      data = @packet_adapter.adapt_out(data) unless @packet_adapter.nil?
+    elsif hash[:json]
+      json = {}
+      json[:protocol_number] = protocol_magic_number
+      json[:action_number] = action_number + 0x01
+
+      data = hash.clone
+      data.delete(:json)
+      data[:protocol_number] = data.delete(:protocol_magic_number) if data.include?(:protocol_magic_number)
+      json.merge!(data)
+
+      @packet_adapter.push
+      @packet_adapter.use_raw
+      @packet_adapter.add_adapter(TJSONAdapter)
+      data = @packet_adapter.adapt_out(json)
+      @packet_adapter.pop
     end
 
-    socket.send_data data_string unless socket.nil?
-    data_string
+    socket.send_data data unless socket.nil?
+    data
   end
 
   def payload

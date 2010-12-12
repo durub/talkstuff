@@ -61,6 +61,22 @@ class PacketHandlerTest < Test::Unit::TestCase
     assert_equal "\x20data!", @handler.answer_with(:protocol_magic_number => false, :action_number => 0x20, :string => "data!")
   end
 
+  def test_answer_with_json
+    @handler = PacketHandler.new(0x00)
+    @handler.instance_variable_set :@action_number, 0x10
+
+    # FIXME
+    # semi-integration test, anyone? :)
+    @handler.instance_variable_set :@packet_adapter, PacketAdapter.new
+
+    assert_equal "TJSON{\"protocol_number\":0,\"action_number\":17}", @handler.answer_with(:json => true)
+    assert_equal "TJSON{\"protocol_number\":0,\"action_number\":17,\"message\":\"hello\"}",
+                 @handler.answer_with(:message => "hello", :json => true)
+    assert_equal "TJSON{\"protocol_number\":16,\"action_number\":21,\"message\":\"hello\",\"number\":5.0}",
+                 @handler.answer_with(:protocol_magic_number => 0x10, :action_number => 0x15, :message => "hello",
+                :number => 5.0, :json => true)
+  end
+
   def test_answer_with_sockets
     socket = mock("Socket")
     socket.expects(:send_data).with do |data|
