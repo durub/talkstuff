@@ -43,6 +43,22 @@ class MetapacketTest < Test::Unit::TestCase
     assert_equal ({:string => "hi", :number => 50}), packet.payload
   end
 
+  def test_adapt_should_read_meta
+    adapter = mock("JSON Adapter") do
+      stubs(:adapt_in).returns({ :protocol_number => 0x10, :action_number => 0x00, :string => "hi", :number => 50 })
+    end
+
+    packet = Metapacket.new({ :protocol_number => 0x00, :action_number => 0x10 })
+    assert_equal 0x00, packet.protocol_number
+    assert_equal 0x10, packet.action_number
+    assert_equal 0x10, packet.adapt(adapter).protocol_number
+    assert_equal 0x00, packet.adapt(adapter).action_number
+
+    packet.adapt!(adapter)
+    assert_equal 0x10, packet.protocol_number
+    assert_equal 0x00, packet.action_number
+  end
+
   def test_special
     packet = Metapacket.new({ :protocol_number => 0x30, :action_number => 0x60, :anything => "string" })
 
