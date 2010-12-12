@@ -31,6 +31,8 @@ class Metapacket
 
   def strip_meta_from_payload!
     if !@stripped
+      read_meta
+
       if @payload.kind_of? Hash
         @payload.delete(:protocol_number)
         @payload.delete(:action_number)
