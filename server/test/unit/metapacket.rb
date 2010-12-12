@@ -30,6 +30,19 @@ class MetapacketTest < Test::Unit::TestCase
     assert_equal [0xdb, 0x01], packet.payload
   end
 
+  def test_adapt_hash
+    adapter = mock("JSON Adapter") do
+      stubs(:adapt_in).returns({ :string => "hi", :number => 50 })
+    end
+
+    packet = Metapacket.new("TJSON{\"string\":\"hi\",\"number\":50}")
+    assert_equal ({:string => "hi", :number => 50}), packet.adapt(adapter).payload
+    assert_not_equal ({:string => "hi", :number => 50}), packet.payload
+    assert_not_equal packet, packet.adapt(adapter)
+    assert_equal packet, packet.adapt!(adapter)
+    assert_equal ({:string => "hi", :number => 50}), packet.payload
+  end
+
   def test_special
     packet = Metapacket.new({ :protocol_number => 0x30, :action_number => 0x60, :anything => "string" })
 

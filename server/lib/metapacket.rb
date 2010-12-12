@@ -51,7 +51,8 @@ class Metapacket
   end
 
   def adapt!(adapter)
-    @payload = adapter.adapt_in(@payload).unpack("C*")
+    @payload = adapter.adapt_in(@payload)
+    @payload = @payload.unpack("C*") unless @payload.kind_of? Hash
     self
   end
 
