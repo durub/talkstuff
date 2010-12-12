@@ -62,6 +62,16 @@ class TalkServerTest < Test::Unit::TestCase
     server.register_handler(handler)
   end
 
+  def test_registering_adapters
+    manager = mock("Adapter manager")
+
+    manager.stubs(:add_adapter).with do |klass|
+      klass.respond_to?(:adapt_in) && klass.respond_to?(:adapt_out)
+    end
+
+    TalkServer.new.init_adapters(manager)
+  end
+
   private
     def open_and_close_connection(host, port)
       TCPSocket.open(host, port).close

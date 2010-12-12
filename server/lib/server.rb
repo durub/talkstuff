@@ -6,6 +6,7 @@ class TalkServer
     @dispatcher = PacketDispatcher.new(0xdb)
     @server_data = ServerData.new
     init_data
+    init_adapters(@packet_adapter)
 
     @ip, @port, @debug = ip, port, $DEVELOPMENT || debug
     @signature = nil
@@ -15,6 +16,10 @@ class TalkServer
     @server_data[:user_list] = UserList.new
     @server_data[:admin_keys] = ["test_key"]
     @server_data[:packet_adapter] = @packet_adapter
+  end
+
+  def init_adapters(adapter_manager)
+    adapter_manager.add_adapter(TJSONAdapter)
   end
 
   def start
