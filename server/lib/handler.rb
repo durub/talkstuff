@@ -21,8 +21,11 @@ class PacketHandler
     def call_handler_for(action_number, packet = [], server_data = nil)
       klass = Kernel.const_get(self.name).new
 
+      packet_adapter = server_data[:packet_adapter] if server_data.kind_of? Hash
+      packet_adapter ||= PacketAdapter.new
+
       klass.instance_variable_set :@action_number, action_number
-      klass.instance_variable_set :@packet_adapter, server_data.delete(:packet_adapter) || PacketAdapter.new rescue PacketAdapter.new
+      klass.instance_variable_set :@packet_adapter, packet_adapter
       klass.instance_variable_set :@server, server_data || {}
       if packet.kind_of? Metapacket
         if packet.payload.kind_of?(Hash) || packet.payload.kind_of?(String)
