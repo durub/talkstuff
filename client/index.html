@@ -10,7 +10,7 @@
         function debug(str){ $("#debug").append("<p>" +  str); };
         function submit() {
           var message = $("#input-msg").val();
-          
+
           $("#input-msg").val("");
           if(message != "") {
             ws.send(message);
@@ -27,7 +27,7 @@
             submit();
           }
         });
-        
+
         $("#submit-msg").click(function() {
           submit();
         });
