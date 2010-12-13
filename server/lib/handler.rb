@@ -127,23 +127,9 @@ class PacketHandler
     data
   end
 
-  def payload
-    @payload
-  end
-
-  def socket
-    @socket
-  end
-
-  def action_number
-    @action_number
-  end
-
+  # accessors
+  attr_reader :payload, :socket, :action_number, :server
   def protocol_magic_number
     @magic_number
-  end
-
-  def server
-    @server
   end
 end
