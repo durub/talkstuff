@@ -46,7 +46,7 @@ class PacketHandler
   end
 
   def initialize(magic_number = nil)
-    @socket, @payload = nil
+    @socket, @payload = nil, nil
     @magic_number = magic_number.nil? ? 0xdb : magic_number
     #                                    |
     #                                    ---------> Default protocol magic number
