@@ -1,0 +1,5 @@
+talk_server:
+  bind_ip: 0.0.0.0
+  port: 8080
+  development: true
+  protocol_number: 0xdb

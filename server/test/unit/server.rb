@@ -1,22 +1,22 @@
 require 'em-websocket'
 require 'socket'
 
-class TalkServerTest < Test::Unit::TestCase
+class ServerTest < Test::Unit::TestCase
   def test_initialize
     # defaults
-    server = TalkServer.new
+    server = Server.new
     assert_equal "0.0.0.0", server.ip
     assert_equal 8080, server.port
     assert_equal false, server.debug
 
     # specifics
-    server = TalkServer.new("1.2.3.4", 8040, false)
+    server = Server.new({:bind_ip => "1.2.3.4", :port => 8040, :development => false})
     assert_equal "1.2.3.4", server.ip
     assert_equal 8040, server.port
     assert_equal false, server.debug
 
     # debug
-    assert_equal true, TalkServer.new("", 0, true).debug
+    assert_equal true, TalkServer.new({:development => true}).debug
   end
 
   # This code sucks
@@ -28,7 +28,7 @@ class TalkServerTest < Test::Unit::TestCase
     port = 32753
 
     EventMachine.run do
-      server = TalkServer.new("0.0.0.0", port)
+      server = Server.new({:bind_ip => "0.0.0.0", :port => 32753})
       server.start
 
       # to run after server is started
@@ -52,7 +52,7 @@ class TalkServerTest < Test::Unit::TestCase
   end
 
   def test_register_handlers
-    server = TalkServer.new("0.0.0.0", 8080)
+    server = Server.new({:bind_ip => "0.0.0.0", :port => 8080})
     handler = mock("Handler")
 
     handler.expects(:register_handlers).with do |dispatcher|
@@ -69,7 +69,7 @@ class TalkServerTest < Test::Unit::TestCase
       klass.respond_to?(:adapt_in) && klass.respond_to?(:adapt_out)
     end
 
-    TalkServer.new.init_adapters(manager)
+    Server.new.init_adapters(manager)
   end
 
   private

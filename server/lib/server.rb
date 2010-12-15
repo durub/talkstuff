@@ -1,25 +1,34 @@
-class TalkServer
+class Server
   attr_reader :ip, :port, :debug
 
-  def initialize(ip = "0.0.0.0", port = 8080, debug = false)
+  def initialize(config = {})
+    # transform all keys into strings
+    config = config.inject({}) do |options, (key, value)|
+      options[key.to_s] = value
+      options
+    end
+
+    # initialize
     @packet_adapter = PacketAdapter.new
-    @dispatcher = PacketDispatcher.new(0xdb)
+    @dispatcher = PacketDispatcher.new(config["protocol_number"] || 0xdb)
     @server_data = ServerData.new
     init_data
     init_adapters(@packet_adapter)
 
-    @ip, @port, @debug = ip, port, $DEVELOPMENT || debug
-    @signature = nil
-  end
-
-  def init_data
-    @server_data[:user_list] = UserList.new
-    @server_data[:admin_keys] = ["test_key"]
     @server_data[:packet_adapter] = @packet_adapter
+    @signature = nil
+
+    @ip = config["bind_ip"] || "0.0.0.0"
+    @port = config["port"] || 8080
+    @debug = config["development"] || false
   end
 
+  # meant to be overriden
+  def init_data
+  end
+
+  # meant to be overriden
   def init_adapters(adapter_manager)
-    adapter_manager.add_adapter(TJSONAdapter)
   end
 
   def start
@@ -74,7 +83,7 @@ class TalkServer
     # don't call event dispatcher directly
     # it's supposed to be used as a "callback"
     def event_dispatcher(socket)
-      if $DEVELOPMENT
+      if @debug
         socket.onopen do
           on_open_development(socket)
         end
