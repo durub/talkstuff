@@ -25,7 +25,7 @@ task :stats do
 
       stats_directories = [
         %w(Libraries lib/),
-        %w(Handlers handlers/)
+        %w(Handlers app/handlers/)
       ].collect { |name, dir| [ name, "#{Dir.pwd}/#{dir}" ] }.select { |name, dir| File.directory?(dir) }
 
       puts CodeStatistics::CodeStatistics.new(stats_directories).to_s

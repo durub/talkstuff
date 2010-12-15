@@ -57,6 +57,8 @@ class Server
         @dispatcher.handle(packet, @server_data)
       rescue RuntimeError
         print "Dispatcher::handle exception: ", $!, "\n" if @debug
+      rescue
+        print "Unknown exception: \n", $!, "\n" if debug
       end
     end
 
