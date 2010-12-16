@@ -1,7 +1,9 @@
 How to:
 
-1. Install em-websocket gem
-  $ gem install em-websocket
+1. Install required gems
+  $ bundle install
+  OR
+  $ bundle install --without development
 
 2. Run server
   $ ruby server.rb
@@ -9,9 +11,7 @@ How to:
 Testing:
 
 You will need Mocha and rake.
-Open up a terminal and:
-
-$ gem install rake mocha
+If you have installed the development group with bundle install, everything should be installed already.
 
 Then you can test using rake:
 

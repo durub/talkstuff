@@ -32,7 +32,7 @@ task :stats do
     rescue LoadError
       puts "You need to install the code_statistics gem to use the stats task"
       puts "Install it using: "
-      puts "$ gem install code_statistics"
+      puts "$ bundle install"
     end
 end
 
