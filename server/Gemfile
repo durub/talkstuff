@@ -1,0 +1,8 @@
+source "http://rubygems.org"
+
+gem "em-websocket"
+
+group :development do
+  gem "mocha"
+  gem "code_statistics"
+end
